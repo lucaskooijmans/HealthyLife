@@ -5,6 +5,7 @@ from utils.model_utils import load_model, predict_obesity
 # Load model
 model = load_model()
 
+# Recommendations dictionary
 recommendations = {
     'Insufficient_Weight': "Overweeg voedingsmiddelen toe te voegen die rijk zijn aan gezonde vetten en eiwitten om aan te komen.",
     '0rmal_Weight': "Blijf actief en eet gebalanceerd om je gezonde gewicht te behouden!",
@@ -15,17 +16,9 @@ recommendations = {
     'Obesity_Type_III': "Sterk aangeraden om medische ondersteuning te zoeken voor een veilig afslankplan."
 }
 
-
-
 # Initialize prediction step tracking in session state
 if 'prediction_step' not in st.session_state:
     st.session_state.prediction_step = 1
-
-if 'Age' not in st.session_state:
-    st.session_state.Age = 0
-
-if 'Gender' not in st.session_state:
-    st.session_state.Gender = 'Man'
 
 # Navigation functions
 def next_step():
@@ -34,31 +27,22 @@ def next_step():
 def prev_step():
     st.session_state.prediction_step -= 1
 
-
-
 # Step-by-step form for Prediction
 if st.session_state.prediction_step == 1:
     st.write("### Stap 1: Basisgegevens")
     Age = st.slider('Leeftijd', 15, 80, 25)
     Gender = st.selectbox('Geslacht', ['Man', 'Vrouw'])
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.Age = Age
-        st.session_state.Gender = Gender
+    if st.button("Volgende", on_click=lambda: (st.session_state.update({'Age': Age, 'Gender': Gender}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 2:
-    # Debugging
-    st.write(st.session_state)
-    st.write(st.session_state.Age)
-    st.write(st.session_state.Gender)
-
     st.write("### Stap 2: Lichaamsgegevens")
     Height = st.slider('Lengte (cm)', 140, 220, 170)
     Weight = st.slider('Gewicht (kg)', 40, 150, 70)
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.Height = Height
-        st.session_state.Weight = Weight
+    if st.button("Volgende", on_click=lambda: (st.session_state.update({'Height': Height, 'Weight': Weight}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 3:
     st.write("### Stap 3: Levensstijl en gezondheid")
@@ -68,10 +52,13 @@ elif st.session_state.prediction_step == 3:
     
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.family_history_with_overweight = family_history_with_overweight
-        st.session_state.FAVC = FAVC
-        st.session_state.FCVC = FCVC
+    if st.button("Volgende", on_click=lambda: (
+        st.session_state.update({
+            'family_history_with_overweight': family_history_with_overweight,
+            'FAVC': FAVC,
+            'FCVC': FCVC
+        }), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 4:
     st.write("### Stap 4: Levensstijl en gezondheid")
@@ -80,9 +67,9 @@ elif st.session_state.prediction_step == 4:
     
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.NCP = NCP
-        st.session_state.CAEC = CAEC
+    if st.button("Volgende", on_click=lambda: (
+        st.session_state.update({'NCP': NCP, 'CAEC': CAEC}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 5:
     st.write("### Stap 5: Levensstijl en gezondheid")
@@ -91,9 +78,9 @@ elif st.session_state.prediction_step == 5:
     
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.SMOKE = SMOKE 
-        st.session_state.CH2O = CH2O
+    if st.button("Volgende", on_click=lambda: (
+        st.session_state.update({'SMOKE': SMOKE, 'CH2O': CH2O}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 6:
     st.write("### Stap 6: Levensstijl en gezondheid")
@@ -102,9 +89,9 @@ elif st.session_state.prediction_step == 6:
     
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.SCC = SCC 
-        st.session_state.FAF = FAF
+    if st.button("Volgende", on_click=lambda: (
+        st.session_state.update({'SCC': SCC, 'FAF': FAF}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 7:
     st.write("### Stap 7: Levensstijl en gezondheid")
@@ -113,9 +100,9 @@ elif st.session_state.prediction_step == 7:
     
     if st.button("Vorige", on_click=prev_step):
         pass
-    if st.button("Volgende", on_click=next_step):
-        st.session_state.TUE = TUE 
-        st.session_state.CALC = CALC
+    if st.button("Volgende", on_click=lambda: (
+        st.session_state.update({'TUE': TUE, 'CALC': CALC}), next_step())):
+        pass
 
 elif st.session_state.prediction_step == 8:
     st.write("### Stap 8: Levensstijl en gezondheid")
@@ -124,42 +111,50 @@ elif st.session_state.prediction_step == 8:
     if st.button("Vorige", on_click=prev_step):
         pass
     if st.button("Voorspel gezondheidstoestand"):
-        # MTRANS hierin poepen
+        # MTRANS into session state
         st.session_state.MTRANS = MTRANS
 
-        # Encode categorical features
-        input_data = pd.DataFrame({
-            'Gender': [1 if st.session_state.Gender == 'Man' else 0],
-            'Age': [st.session_state.Age],
-            'Height': [st.session_state.Height / 100],  # lengte in meters
-            'Weight': [st.session_state.Weight],
-            'family_history_with_overweight': [1 if st.session_state.family_history_with_overweight == 'Ja' else 0],
-            'FAVC': [1 if st.session_state.FAVC == 'Ja' else 0],
-            'FCVC': [st.session_state.FCVC],
-            'NCP': [st.session_state.NCP],
-            'SMOKE': [1 if st.session_state.SMOKE == 'Ja' else 0],
-            'CH2O': [st.session_state.CH2O],
-            'SCC': [1 if st.session_state.SCC == 'Ja' else 0],
-            'FAF': [st.session_state.FAF],
-            'TUE': [st.session_state.TUE]
-        })
+        # Debugging session state on final page
+        st.write("#### Debugging Session State Data")
+        st.write(st.session_state)  # Show all data stored in session state
 
-        # Apply one-hot encoding to CAEC, CALC, and MTRANS
-        encoded_data = pd.get_dummies(pd.DataFrame({
-            'CAEC': [st.session_state.CAEC],
-            'CALC': [st.session_state.CALC],
-            'MTRANS': [st.session_state.MTRANS]
-        }))
+        try:
+            # Prepare input data for model
+            input_data = pd.DataFrame({
+                'Gender': [1 if st.session_state.Gender == 'Man' else 0],
+                'Age': [st.session_state.Age],
+                'Height': [st.session_state.Height / 100],  # lengte in meters
+                'Weight': [st.session_state.Weight],
+                'family_history_with_overweight': [1 if st.session_state.family_history_with_overweight == 'Ja' else 0],
+                'FAVC': [1 if st.session_state.FAVC == 'Ja' else 0],
+                'FCVC': [st.session_state.FCVC],
+                'NCP': [st.session_state.NCP],
+                'SMOKE': [1 if st.session_state.SMOKE == 'Ja' else 0],
+                'CH2O': [st.session_state.CH2O],
+                'SCC': [1 if st.session_state.SCC == 'Ja' else 0],
+                'FAF': [st.session_state.FAF],
+                'TUE': [st.session_state.TUE]
+            })
 
-        # Combine input_data with encoded_data
-        input_data = pd.concat([input_data, encoded_data], axis=1)
+            # Encode categorical features
+            encoded_data = pd.get_dummies(pd.DataFrame({
+                'CAEC': [st.session_state.CAEC],
+                'CALC': [st.session_state.CALC],
+                'MTRANS': [st.session_state.MTRANS]
+            }))
 
-        # Generate prediction
-        prediction = predict_obesity(model, input_data)
-        st.success(f"Het voorspelde obesitasniveau is: **{prediction}**")
+            # Combine input_data with encoded_data
+            input_data = pd.concat([input_data, encoded_data], axis=1)
 
-        recommendation = recommendations.get(prediction)
-        st.info(f"**Aanbeveling:** {recommendation}")
+            # Make prediction
+            prediction = predict_obesity(model, input_data)
+            st.success(f"Het voorspelde obesitasniveau is: **{prediction}**")
+
+            recommendation = recommendations.get(prediction, "Geen aanbeveling beschikbaar.")
+            st.info(f"**Aanbeveling:** {recommendation}")
+
+        except Exception as e:
+            st.error(f"Er is een fout opgetreden bij het voorspellen: {e}")
 
         st.write("Privacy: Jouw gegevens worden niet opgeslagen en blijven privé.")
         st.button("Opnieuw voorspellen", on_click=st.session_state.clear())

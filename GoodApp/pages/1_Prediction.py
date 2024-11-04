@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 from utils.model_utils import load_model, predict_obesity
 
 # Load model
@@ -26,6 +27,12 @@ def next_step():
 
 def prev_step():
     st.session_state.prediction_step -= 1
+
+# Sidebar with progress indicator
+st.sidebar.title("Prediction Progress")
+steps = 8
+progress = st.session_state.prediction_step / steps
+st.sidebar.progress(progress)
 
 # Step-by-step form for Prediction
 if st.session_state.prediction_step == 1:
@@ -148,13 +155,38 @@ elif st.session_state.prediction_step == 8:
 
             # Make prediction
             prediction = predict_obesity(model, input_data)
-            st.success(f"Het voorspelde obesitasniveau is: **{prediction}**")
+            st.success(f"🧍 Het voorspelde obesitasniveau is: **{prediction}**")
 
             recommendation = recommendations.get(prediction, "Geen aanbeveling beschikbaar.")
-            st.info(f"**Aanbeveling:** {recommendation}")
+            st.info(f"⚖️ **Aanbeveling:** {recommendation}")
 
         except Exception as e:
             st.error(f"Er is een fout opgetreden bij het voorspellen: {e}")
 
-        st.write("Privacy: Jouw gegevens worden niet opgeslagen en blijven privé.")
+        st.info("🔒 **Privacy:** Uw gegevens worden niet opgeslagen en worden alleen lokaal verwerkt voor deze voorspelling.")
+
+        bmi = round(st.session_state.Weight / ((st.session_state.Height / 100) ** 2), 1)
+        st.metric(label="Your BMI", value=bmi)
+
+        # Comparison Chart for Water Intake and Activity
+        recommended_water = 2.0
+        recommended_activity = 5  # Assume 5 days per week of physical activity
+
+        fig, ax = plt.subplots()
+        ax.bar(["Water Intake (L)", "Activity (days/week)"], [st.session_state.CH2O, st.session_state.FAF], label="Your Data")
+        ax.bar(["Water Intake (L)", "Activity (days/week)"], [recommended_water, recommended_activity], color="gray", alpha=0.5, label="Recommended")
+        ax.legend()
+        st.pyplot(fig)
+
+        # Radar Chart for Lifestyle Factors
+        categories = ['Veggies Intake', 'Water Intake', 'Activity Level', 'Calorie Monitoring']
+        values = [
+            st.session_state.FCVC,                # Veggie Intake
+            st.session_state.CH2O,                # Water Intake
+            st.session_state.FAF,                 # Physical Activity Frequency
+            1 if st.session_state.SCC == "Yes" else 0  # Calorie Monitoring (binary)
+        ]
+        max_values = [5, recommended_water, recommended_activity, 1]
+
+        # Restart option
         st.button("Opnieuw voorspellen", on_click=st.session_state.clear())

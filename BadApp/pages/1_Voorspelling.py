@@ -62,8 +62,7 @@ elif st.session_state.prediction_step == 2:
     st.write("### Stap 2: Lichaamsgegevens")
     Height = st.slider('Lengte (cm)', 140, 220, 170)
     Weight = st.slider('Gewicht (kg)', 40, 150, 70)
-    if st.button("Vorige", on_click=prev_step):
-        pass
+
     if st.button("Volgende", on_click=lambda: (st.session_state.update({'Height': Height, 'Weight': Weight}), next_step())):
         pass
 
@@ -72,9 +71,7 @@ elif st.session_state.prediction_step == 3:
     family_history_with_overweight = st.selectbox('Familiegeschiedenis van overgewicht', ['Ja', 'Nee'])
     FAVC = st.selectbox('Eet je vaak calorierijk voedsel?', ['Ja', 'Nee'])
     FCVC = st.slider('Hoeveel groenten eet je per dag? (porties)', 0, 5, 2)
-    
-    if st.button("Vorige", on_click=prev_step):
-        pass
+
     if st.button("Volgende", on_click=lambda: (
         st.session_state.update({
             'family_history_with_overweight': family_history_with_overweight,
@@ -88,8 +85,6 @@ elif st.session_state.prediction_step == 4:
     NCP = st.slider('Hoeveel maaltijden eet je op een dag?', 1, 4, 3)
     CAEC = st.selectbox('Eet je tussen de maaltijden door?', ['Nooit', 'Zelden', 'Soms', 'Altijd'])
     
-    if st.button("Vorige", on_click=prev_step):
-        pass
     if st.button("Volgende", on_click=lambda: (
         st.session_state.update({'NCP': NCP, 'CAEC': CAEC}), next_step())):
         pass
@@ -99,8 +94,6 @@ elif st.session_state.prediction_step == 5:
     SMOKE = st.selectbox('Rook je?', ['Ja', 'Nee'])
     CH2O = st.slider('Hoeveel liter water drink je per dag?', 1, 3, 2)
     
-    if st.button("Vorige", on_click=prev_step):
-        pass
     if st.button("Volgende", on_click=lambda: (
         st.session_state.update({'SMOKE': SMOKE, 'CH2O': CH2O}), next_step())):
         pass
@@ -110,8 +103,6 @@ elif st.session_state.prediction_step == 6:
     SCC = st.selectbox('Monitor je dagelijks je calorie-inname?', ['Ja', 'Nee'])
     FAF = st.slider('Hoeveel keer per week doe je fysieke activiteit?', 0, 7, 2)
     
-    if st.button("Vorige", on_click=prev_step):
-        pass
     if st.button("Volgende", on_click=lambda: (
         st.session_state.update({'SCC': SCC, 'FAF': FAF}), next_step())):
         pass
@@ -121,8 +112,6 @@ elif st.session_state.prediction_step == 7:
     TUE = st.slider('Hoeveel uur per dag besteed je aan technologie?', 0, 10, 3)
     CALC = st.selectbox('Hoe vaak drink je alcohol?', ['Nooit', 'Zelden', 'Soms', 'Altijd'])
     
-    if st.button("Vorige", on_click=prev_step):
-        pass
     if st.button("Volgende", on_click=lambda: (
         st.session_state.update({'TUE': TUE, 'CALC': CALC}), next_step())):
         pass
@@ -131,8 +120,6 @@ elif st.session_state.prediction_step == 8:
     st.write("### Stap 8: Levensstijl en gezondheid")
     MTRANS = st.selectbox('Wat is je belangrijkste vervoermiddel?', ['Auto', 'Motorfiets', 'Fiets', 'Openbaar vervoer', 'Wandelen'])
 
-    if st.button("Vorige", on_click=prev_step):
-        pass
     if st.button("Voorspel gezondheidstoestand"):
         # MTRANS into session state
         st.session_state.MTRANS = MTRANS

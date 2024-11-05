@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Pagina configuratie
-st.set_page_config(page_title="HealthyLife - Obesitas Voorspelling", page_icon="🍏", layout="wide")
+st.set_page_config(page_title="HealthyLife - Obesitas voorspelling", page_icon="🍏", layout="wide")
 
 # Titel en introductie
 st.title("Welkom bij HealthyLife!")
@@ -32,7 +32,7 @@ with col1:
     """)
 with col2:
     st.markdown("""
-        ### 🧑‍⚕️ **Over Ons**
+        ### 🧑‍⚕️ **Over ons**
         - Lees meer over onze missie en aanpak.
         - Informatie over ons privacybeleid en ethiek.
     """)
